@@ -36,5 +36,21 @@ $(document).ready(function () {
         }
     })
 
+    //this will check for someone pressing caps, if held, show the uppercase
+    $(document).keydown(function (event) {
+        if (event.keyCode == 20) {
+            hideLowerCaseBox();
+            $("#keyboard-upper-container").toggle();
+        }
+    })
+
+    //this will check for someone letting go of caps, if let go, show the lowercase again
+    $(document).keyup(function (event) {
+        if (event.keyCode == 20) {
+            hideUpperCaseBox();
+            $("#keyboard-lower-container").toggle();
+        }
+    })
+
 })
 
