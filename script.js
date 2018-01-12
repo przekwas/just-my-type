@@ -52,5 +52,11 @@ $(document).ready(function () {
         }
     })
 
+    //this will check for any keypress done by the user
+    $(document).keypress(function (event) {
+        console.log(event.which);
+    })
+
+
 })
 
