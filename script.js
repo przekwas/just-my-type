@@ -2,14 +2,17 @@
 
 /*THIS IS THE FUNCTIONS SECTION*/
 
-//function to hide the upper case letters
-function hideUpperCaseBox() {
-    $("#keyboard-upper-container").hide();
+function highlightButton(id) {
+    let idNumber = $("#" + id);
+    idNumber.css({ "background-color": "rgb(255,255,0)" });
 }
 
-function hideLowerCaseBox() {
-    $("#keyboard-lower-container").hide();
+function nohighlightButton(id) {
+    let idNumber = $("#" + id);
+    idNumber.css({ "background-color": "#f5f5f5" });
 }
+
+
 
 /*THIS ENDS THE FUNCTIONS SECTION*/
 
@@ -18,45 +21,28 @@ function hideLowerCaseBox() {
 
 //on page load, hide the uppercase
 $(document).ready(function () {
-    hideUpperCaseBox();
+    $("#keyboard-upper-container").toggle();
 
     //this will check for someone pressing shift, if held, show the uppercase
     $(document).keydown(function (event) {
-        if (event.keyCode == 16) {
-            hideLowerCaseBox();
+        if (event.which === 16 || event.which === 20) {
+            $("#keyboard-lower-container").hide();
             $("#keyboard-upper-container").toggle();
-        }
+        } 
     })
-
     //this will check for someone letting go of shift, if let go, show the lowercase again
     $(document).keyup(function (event) {
-        if (event.keyCode == 16) {
-            hideUpperCaseBox();
+        if (event.which === 16 || event.which === 20) {
+            $("#keyboard-upper-container").hide();
             $("#keyboard-lower-container").toggle();
         }
+        $('.highlight').removeClass('highlight');
     })
 
-    //this will check for someone pressing caps, if held, show the uppercase
-    $(document).keydown(function (event) {
-        if (event.keyCode == 20) {
-            hideLowerCaseBox();
-            $("#keyboard-upper-container").toggle();
-        }
-    })
-
-    //this will check for someone letting go of caps, if let go, show the lowercase again
-    $(document).keyup(function (event) {
-        if (event.keyCode == 20) {
-            hideUpperCaseBox();
-            $("#keyboard-lower-container").toggle();
-        }
-    })
-
-    //this will check for any keypress done by the user
     $(document).keypress(function (event) {
-        console.log(event.which);
+        let keyPress = event.which;
+        $('#' + keyPress).addClass('highlight');
     })
-
+    
 
 })
-
