@@ -1,7 +1,20 @@
-let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
 
-//on page load, hide the uppercase
 $(document).ready(function () {
+
+    //global variables
+    let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
+    let sentenceIndex = 0;
+    let letterIndex = 0;
+    let mistakesMade = 0;
+
+    //sets the current sentence and letter to add to their respective divs
+    let currentSentence = sentences[0];
+    let currentLetter = currentSentence[0];
+    let targetLetterDiv = $("#target-letter");
+    targetLetterDiv.text(currentLetter);
+    $("#sentence").append(sentences[sentenceIndex]);
+
+    //hides the keyboard on page load
     $("#keyboard-upper-container").toggle();
 
     //making my life easier
@@ -24,35 +37,35 @@ $(document).ready(function () {
         $('.highlight').removeClass('highlight');
     })
 
-    let numberOfMistakes = 0;
-    let numberCorrect = 0;
-    $("#sentence").append(sentences[0]);
 
-    //gets the lengths of each sentence in the array
-    let lengths = sentences.map(function (word) {
-        return word.length
-    });
-
-
-
-    //will match up a keypress id and add a class to change its bgcolor
     $(document).keypress(function (event) {
+        //highlights the letters
         let keyPress = event.which;
         $('#' + keyPress).addClass('highlight');
-        if (event.which > 46 && event.which !== 91 || event.which === 32) {
-            $("#yellow-block").animate({ left: "+=17" }, { duration: 1, easing: "linear" });
-            console.log(event.which);
-        }
 
-        // for (let i = 0; i < lengths.length; i++) {
-        //     //logic to check if current keypress matches with the leading letter
-        //     if (lengths[i].charCodeAt(i) === keyPress) {
-        //         numberCorrect++;
-        //         console.log("YOU RIGHT");
-        //     } else if (lengths[i].charCodeAt(i) !== keyPress) {
-        //         numberOfMistakes++;
-        //         console.log("YOU WRONG");
-        //     }
-        // }
+        let currentSentence = sentences[sentenceIndex];
+        let currentLetter = currentSentence[letterIndex];
+
+        letterIndex++;
+        let nextLetter = currentSentence[letterIndex];
+
+        targetLetterDiv.text(nextLetter);
+
+        //moves the yellow block over
+        $("#yellow-block").animate({ left: "+=17.5px" }, { duration: 1, easing: "linear" });
+
+        //checks accuracy and adds the glyphicons to the feedback div only until the sentence is ran through
+        if (letterIndex < currentSentence.length) {
+            if (event.which === currentLetter.charCodeAt()) {
+                $("#feedback").append("<span class = 'glyphicon glyphicon-ok'></span>");
+            } else {
+                $("#feedback").append("<span class = 'glyphicon glyphicon-remove'></span>");
+                mistakesMade++;
+            }
+        } else {
+            $("#feedback").empty();
+            sentenceIndex++;
+            letterIndex = 0;
+        }
     })
 })
