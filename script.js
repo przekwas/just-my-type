@@ -65,7 +65,9 @@ $(document).ready(function () {
         } else {
             $("#feedback").empty();
             sentenceIndex++;
+            $("#sentence").text(sentences[sentenceIndex]);
             letterIndex = 0;
+            $("#yellow-block").animate({ left: "15px" }, { duration: 1, easing: "linear" });
         }
     })
 })
