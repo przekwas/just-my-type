@@ -62,7 +62,6 @@ $(document).ready(function () {
 
         let currentSentence = sentences[sentenceIndex];
         let currentLetter = currentSentence[letterIndex];
-        console.log(letterIndex, currentSentence);
 
         //moves the letter index over and gets the next letter to put into the target letter div on each keypress
         letterIndex++;
@@ -75,6 +74,7 @@ $(document).ready(function () {
         $("#yellow-block").animate({ left: "+=17.5px" }, { duration: 1, easing: "linear" });
 
         if (sentenceIndex < sentences.length) {
+
             //checks accuracy and adds the glyphicons to the feedback div only until the sentence is ran through
             if (letterIndex < currentSentence.length) {
                 if (event.which === currentLetter.charCodeAt()) {
@@ -83,38 +83,30 @@ $(document).ready(function () {
                     $("#feedback").append("<span class='glyphicon glyphicon-remove'></span>");
                     mistakesMade++;
                 }
-                //empty the feedback div, get the next sentence and put it in the sentence div, reset the yellow block
+            //empty the feedback div, get the next sentence and put it in the sentence div, reset the yellow block
             } else if (sentenceIndex < sentences.length - 1) {
                 $("#feedback").empty();
                 sentenceIndex++;
                 $("#sentence").text(sentences[sentenceIndex]);
                 letterIndex = 0;
+                targetLetterDiv.text(currentSentence[letterIndex]);
                 $("#yellow-block").animate({ left: "15px" }, { duration: 1, easing: "linear" });
             } else {
+                //gets an end time, subtracts the start time, convert to minutes, calc wpm
                 timeStampEnd = event.timeStamp;
                 let diff = timeStampEnd - timeStampStart;
                 let time = Math.floor(diff / 1000) / 60;
-                let wpm = numberOfWords / time - 2 * mistakesMade;
+                let wpm = Math.floor(numberOfWords / time - 2 * mistakesMade);
+                //clears out all the top divs, hides the block
                 $("#sentence").empty();
                 $("#target-letter").empty();
                 $("#feedback").empty();
                 $("#yellow-block").hide();
+                //adds new text to the sentence div with game info
                 $("#sentence").append("Ran out of sentences!\n" + "And you had " + wpm + " words per minute!");
+                //fades in a replay button
                 targetLetterDiv.append(replayButton).hide().delay(3000).fadeIn(500);
             }
-            //get the end time, subtract the end from start, convert ms to minutes, and calc the wpm
-            // } else {
-            //     timeStampEnd = event.timeStamp;
-            //     let diff = timeStampEnd - timeStampStart;
-            //     let time = Math.floor(diff / 1000) / 60;
-            //     let wpm = numberOfWords / time - 2 * mistakesMade;
-            //     $("#sentence").empty();
-            //     $("#target-letter").empty();
-            //     $("#sentence").append("Ran out of sentences!\n" + "And you had " + wpm + " words per minute!");
-            //     setTimeout(function () {
-            //         targetLetterDiv.append(replayButton)
-            //     }, 3000);
-            // }
         }
     })
 
