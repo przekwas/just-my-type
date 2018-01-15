@@ -11,11 +11,6 @@ $(document).ready(function () {
     let keysPressed = 0;
 
     let replayButton = $("<input class='btn btn-success' type='button' value='Wanna Play Again?' onClick='window.location.reload()'>");
-    // //get total amount of characters in the array
-    // let totalLetters = 0;
-    // for(let i = 0; i < sentences.length; i++) {
-    //     totalLetters += sentences[i].length;
-    // };
 
     //sets the current sentence and letter to add to their respective divs
     let currentSentence = sentences[0];
@@ -74,7 +69,6 @@ $(document).ready(function () {
         $("#yellow-block").animate({ left: "+=17.5px" }, { duration: 1, easing: "linear" });
 
         if (sentenceIndex < sentences.length) {
-
             //checks accuracy and adds the glyphicons to the feedback div only until the sentence is ran through
             if (letterIndex < currentSentence.length) {
                 if (event.which === currentLetter.charCodeAt()) {
@@ -83,15 +77,15 @@ $(document).ready(function () {
                     $("#feedback").append("<span class='glyphicon glyphicon-remove'></span>");
                     mistakesMade++;
                 }
-            //empty the feedback div, get the next sentence and put it in the sentence div, reset the yellow block
+                //empty the feedback div, get the next sentence and put it in the sentence div, reset the yellow block
             } else if (sentenceIndex < sentences.length - 1) {
                 $("#feedback").empty();
                 sentenceIndex++;
                 $("#sentence").text(sentences[sentenceIndex]);
+                targetLetterDiv.text(sentences[sentenceIndex].charAt(0));
                 letterIndex = 0;
-                targetLetterDiv.text(currentSentence[letterIndex]);
                 $("#yellow-block").animate({ left: "15px" }, { duration: 1, easing: "linear" });
-            } else {
+            } else if (sentenceIndex < sentences.length) {
                 //gets an end time, subtracts the start time, convert to minutes, calc wpm
                 timeStampEnd = event.timeStamp;
                 let diff = timeStampEnd - timeStampStart;
@@ -109,5 +103,4 @@ $(document).ready(function () {
             }
         }
     })
-
 })
