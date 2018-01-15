@@ -1,11 +1,21 @@
-
 $(document).ready(function () {
 
     //global variables
     let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
+    let numberOfWords = 54;
     let sentenceIndex = 0;
     let letterIndex = 0;
     let mistakesMade = 0;
+    let timeStampStart = 0;
+    let timeStampEnd = 0;
+    let keysPressed = 0;
+
+    let replayButton = $("<input class='btn btn-success' type='button' value='Wanna Play Again?' onClick='window.location.reload()'>");
+    // //get total amount of characters in the array
+    // let totalLetters = 0;
+    // for(let i = 0; i < sentences.length; i++) {
+    //     totalLetters += sentences[i].length;
+    // };
 
     //sets the current sentence and letter to add to their respective divs
     let currentSentence = sentences[0];
@@ -39,35 +49,73 @@ $(document).ready(function () {
 
 
     $(document).keypress(function (event) {
+
         //highlights the letters
         let keyPress = event.which;
         $('#' + keyPress).addClass('highlight');
 
+        //start the timer at first keypress
+        if (keysPressed < 1) {
+            timeStampStart = event.timeStamp;
+            keysPressed++;
+        }
+
         let currentSentence = sentences[sentenceIndex];
         let currentLetter = currentSentence[letterIndex];
+        console.log(letterIndex, currentSentence);
 
+        //moves the letter index over and gets the next letter to put into the target letter div on each keypress
         letterIndex++;
         let nextLetter = currentSentence[letterIndex];
 
+        //throws next letter into the target div on keypress pass or fail
         targetLetterDiv.text(nextLetter);
 
         //moves the yellow block over
         $("#yellow-block").animate({ left: "+=17.5px" }, { duration: 1, easing: "linear" });
 
-        //checks accuracy and adds the glyphicons to the feedback div only until the sentence is ran through
-        if (letterIndex < currentSentence.length) {
-            if (event.which === currentLetter.charCodeAt()) {
-                $("#feedback").append("<span class = 'glyphicon glyphicon-ok'></span>");
+        if (sentenceIndex < sentences.length) {
+            //checks accuracy and adds the glyphicons to the feedback div only until the sentence is ran through
+            if (letterIndex < currentSentence.length) {
+                if (event.which === currentLetter.charCodeAt()) {
+                    $("#feedback").append("<span class='glyphicon glyphicon-ok'></span>");
+                } else {
+                    $("#feedback").append("<span class='glyphicon glyphicon-remove'></span>");
+                    mistakesMade++;
+                }
+                //empty the feedback div, get the next sentence and put it in the sentence div, reset the yellow block
+            } else if (sentenceIndex < sentences.length - 1) {
+                $("#feedback").empty();
+                sentenceIndex++;
+                $("#sentence").text(sentences[sentenceIndex]);
+                letterIndex = 0;
+                $("#yellow-block").animate({ left: "15px" }, { duration: 1, easing: "linear" });
             } else {
-                $("#feedback").append("<span class = 'glyphicon glyphicon-remove'></span>");
-                mistakesMade++;
+                timeStampEnd = event.timeStamp;
+                let diff = timeStampEnd - timeStampStart;
+                let time = Math.floor(diff / 1000) / 60;
+                let wpm = numberOfWords / time - 2 * mistakesMade;
+                $("#sentence").empty();
+                $("#target-letter").empty();
+                $("#feedback").empty();
+                $("#yellow-block").hide();
+                $("#sentence").append("Ran out of sentences!\n" + "And you had " + wpm + " words per minute!");
+                targetLetterDiv.append(replayButton).hide().delay(3000).fadeIn(500);
             }
-        } else {
-            $("#feedback").empty();
-            sentenceIndex++;
-            $("#sentence").text(sentences[sentenceIndex]);
-            letterIndex = 0;
-            $("#yellow-block").animate({ left: "15px" }, { duration: 1, easing: "linear" });
+            //get the end time, subtract the end from start, convert ms to minutes, and calc the wpm
+            // } else {
+            //     timeStampEnd = event.timeStamp;
+            //     let diff = timeStampEnd - timeStampStart;
+            //     let time = Math.floor(diff / 1000) / 60;
+            //     let wpm = numberOfWords / time - 2 * mistakesMade;
+            //     $("#sentence").empty();
+            //     $("#target-letter").empty();
+            //     $("#sentence").append("Ran out of sentences!\n" + "And you had " + wpm + " words per minute!");
+            //     setTimeout(function () {
+            //         targetLetterDiv.append(replayButton)
+            //     }, 3000);
+            // }
         }
     })
+
 })
